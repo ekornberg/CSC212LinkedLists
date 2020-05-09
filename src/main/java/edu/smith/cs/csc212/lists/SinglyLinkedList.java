@@ -91,7 +91,7 @@ public class SinglyLinkedList<T> extends ListADT<T> {
 	@Override
 	public void addIndex(int index, T item) {
 		checkNotEmpty();
-		
+
 		if (index < 0 || index > size()) { // if not valid/ran out of space
 			throw new BadIndexError(index);
 		} 
