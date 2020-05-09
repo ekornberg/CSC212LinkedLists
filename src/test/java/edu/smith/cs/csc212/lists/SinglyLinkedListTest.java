@@ -265,15 +265,24 @@ public class SinglyLinkedListTest {
 	@Test
 	public void testAddIndexFront() {
 		ListADT<String> data = makeEmptyList();
+		System.out.println("empty");
 		data.addBack("A");
+		System.out.println("+a");
 		testNoLoops(data);
 		Assert.assertEquals(1, data.size());
+		System.out.println("1");
 		Assert.assertEquals("A", data.getFront());
+		System.out.println("=a");
 		data.addIndex(0, "B");
+		System.out.println("+b");
 		testNoLoops(data);
+		System.out.println(data.size());
 		Assert.assertEquals(2, data.size());
+		System.out.println("2");
 		Assert.assertEquals("B", data.getFront());
+		System.out.println("=b");
 		Assert.assertEquals("A", data.getBack());
+		System.out.println("=a");
 	}
 
 	@Test

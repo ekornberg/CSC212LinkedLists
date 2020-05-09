@@ -2,6 +2,8 @@ package edu.smith.cs.csc212.lists;
 
 import me.jjfoley.adt.ListADT;
 import me.jjfoley.adt.errors.BadIndexError;
+import me.jjfoley.adt.errors.EmptyListError;
+import me.jjfoley.adt.errors.RanOutOfSpaceError;
 import me.jjfoley.adt.errors.TODOErr;
 
 /**
@@ -21,17 +23,48 @@ public class SinglyLinkedList<T> extends ListADT<T> {
 	@Override
 	public T removeFront() {
 		checkNotEmpty();
-		throw new TODOErr();
+		T firstValue = this.start.value;
+		this.start = this.start.next;
+		return firstValue;
 	}
 
 	@Override
-	public T removeBack() {
-		throw new TODOErr();
-	}
+	public T removeBack() {	
+		checkNotEmpty();
+		
+		//if only 1 item in list
+		if(size() == 1) {
+			return removeFront(); 
+		} 
+		else { 	  			
+			Node<T> beforeLast = null;
+  			for (Node<T> current = this.start; current.next != null; current = current.next) {
+    			beforeLast = current;
+  			}
+ 			T lastValue = beforeLast.next.value;
+ 			beforeLast.next = null;
+			return lastValue;
+			}
+		}	
 
 	@Override
 	public T removeIndex(int index) {
-		throw new TODOErr();
+		checkNotEmpty(); 
+		//if only 1 item in list
+		if(index==0) {
+			return removeFront(); 
+		} 
+		else { 
+			int at = 0; 
+			for(Node<T> n = this.start; n != null; n = n.next) { 
+				if(at == index-1) { 
+				//need to access variable before 
+					T removed = n.next.value; n.next = n.next.next; 
+					return removed; 
+				} at++; 
+			} 
+			throw new BadIndexError(index); 
+		}
 	}
 
 	@Override
@@ -41,24 +74,122 @@ public class SinglyLinkedList<T> extends ListADT<T> {
 
 	@Override
 	public void addBack(T item) {
-		throw new TODOErr();
+		// deal with empty list
+		if (this.start == null) {
+			addFront(item);
+			return;
+		}
+		// find last node
+		Node<T> back = null;
+		for (Node<T> here = this.start; here != null; here = here.next) {
+			back = here;
+		}
+		assert(back.next == null);
+		back.next = new Node<T>(item, null);
 	}
 
 	@Override
 	public void addIndex(int index, T item) {
-		throw new TODOErr();
-	}
+		checkNotEmpty();
+		
+		if (index < 0 || index > size()) { // if not valid/ran out of space
+			throw new BadIndexError(index);
+		} 
+		if (this.start == null) { // if empty list
+			addFront(item); // new node at start with value "item"
+			System.out.println("front");
+			return;	
+		} else {
+			
+	
 
+//			int at = 0;
+//			for (Node<T> current = this.start; current != null; current = current.next) {
+//				if (at++ == index) {
+//					current = new Node<T>(item, current.next);
+//					
+//					for (int i = size()-1; i <= index; i--) {
+//						current.setIndex(i+1, getIndex(i));
+//					} 
+//					setIndex(index, item);
+//					
+////					int space = size();
+////					// loop backwards; slide items to the right at new given index
+////					for (int i = space-1; i >= index; i--) {
+////						setIndex(i+1, getIndex(i));
+////					} 	
+////					setIndex(index, item); // add item at given index/value	
+////					space++;
+//				}
+//			}
+//			throw new BadIndexError(index); 
+		} 	
+		
+	}
+			
+//			// find last node
+//			Node<T> back = null;
+//			for (Node<T> here = this.start; here != null; here = here.next) {
+//				back = here;
+//			}
+//			assert(back.next == null);
+//			back.next = new Node<T>(item, null);
+//			
+//			// push everything at and to right of given index to the right
+//			//int where = 0;
+//			int space = size();
+//			
+//			// loop over SLL
+//			for (Node<T> current = this.start; current != null; current = current.next) {
+//				for(int i = index; i > index; i++) {	
+//					// move everything at index to the right
+//					current.setIndex(i+1, getIndex(i));
+//					setIndex(index, item);
+//					space++;
+//				
+//				// loop backwards; slide items to the right at new given index
+//				for (int i = space-1; i >= index; i--) {
+//					// stop when hit 
+//					
+//					here.setIndex(i+1, getIndex(i));
+//					
+//					setIndex(index, item); // add item at given index/value	
+//					space++;
+//			
+//					if (where++ == index) {
+//						here = new Node<T>(item, here.next);
+//						return;
+						
+	
+//			int at = 0;
+//			for (Node<T> n = this.start; n != null; n = n.next) {
+//				
+//				Node<T> newNode = null; // make new node at index
+//				
+//				int space = size();
+//				// loop backwards; slide items to the right at new given index
+//				for (int i = space-1; i >= index; i--) {
+//					setIndex(i+1, getIndex(i));
+//				} 	
+//				setIndex(index, item); // add item at given index/value	
+//				space++;
+//				
+//				if (at++ == index) {
+//					return;
+//				}
+//			}
+//			
+	
 	@Override
 	public T getFront() {
 		checkNotEmpty();
-		throw new TODOErr();
+		return this.getIndex(0);
 	}
 
 	@Override
-	public T getBack() {
+	public T getBack() {		
 		checkNotEmpty();
-		throw new TODOErr();
+		return this.getIndex(this.size()-1);
 	}
 
 	@Override
@@ -76,8 +207,17 @@ public class SinglyLinkedList<T> extends ListADT<T> {
 	@Override
 	public void setIndex(int index, T value) {
 		checkNotEmpty();
-		throw new TODOErr();
-	}
+		if (index < 0 || index > size()-1) {
+			throw new BadIndexError(index);
+		} else {
+			int num = 0;
+			for(Node<T> n = this.start; n != null; n = n.next) {
+				if(num == index) {
+					n.value = value;					
+				} num++;
+			}
+		}   
+	}				
 
 	@Override
 	public int size() {
@@ -100,6 +240,7 @@ public class SinglyLinkedList<T> extends ListADT<T> {
 	 * @param <T> the type of the values stored.
 	 */
 	static class Node<T> {
+		public int index;
 		/**
 		 * What node comes after me?
 		 */
@@ -119,6 +260,11 @@ public class SinglyLinkedList<T> extends ListADT<T> {
 			this.next = next;
 		}
 		
+		public void setIndex(int i, T index2) {
+			// TODO Auto-generated method stub
+			
+		}
+
 		/**
 		 * Alternate constructor; create a node with no friends.
 		 * @param value - the value to put in it.
@@ -128,5 +274,4 @@ public class SinglyLinkedList<T> extends ListADT<T> {
 			this.next = null;
 		}
 	}
-
 }
